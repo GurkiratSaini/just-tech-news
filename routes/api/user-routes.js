@@ -63,15 +63,21 @@ router.post('/login', (req, res) => {
                 return;
             }
 
-            // res.json({ user: dbUserData });
-
             // Verify user
+            const validPassword = dbUserData.checkPassword(req.body.password);
+
+            if (!validPassword) {
+                res.status(400).json({ message: 'Incorrect Password' });
+                return;
+            }
+
+            res.json({ user: dbUserData, message: 'You are now logged in!' });
         });
 });
 
 // PUT /api/users/1
 router.put('/:id', (req, res) => {
-    // expects { username: 'UserName', email: 'email@domain.com', password: 'password1234'}
+    // expects { username: 'UserName', email: 'email@domain.com', password: 'password1234' }
     // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
     User.update(req.body, {
         individualHooks: true,
